@@ -1,5 +1,6 @@
 use warp::Filter;
 use crate::handlers;
+use std::collections::HashMap;
 
 
 pub fn routes() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
@@ -13,7 +14,13 @@ fn get_exercise() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejec
 }
 
 fn create_exercise() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+    let route = warp::body::content_length_limit(1024 * 32)
+        .and(warp::body::json())
+        .map(|simple_map: HashMap<String, String>| {
+        "Got a JSON body"
+    });
     warp::path!()
         .and(warp::post())
-        .and_then(handlers::create_exercise(warp::body::bytes()))
+        .and_then(handlers::create_exercise)
 }
+
