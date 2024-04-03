@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use crate::models;
 
 
-pub fn routes() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+pub fn get_routes() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     get_exercise()
 }
 
@@ -24,12 +24,13 @@ fn get_exercise() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejec
 }
 
 fn create_exercise() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-    let route = warp::body::content_length_limit(1024 * 32)
+    let post_route = warp::body::content_length_limit(1024 * 32)
         .and(warp::body::json())
         .map(|simple_map: HashMap<String, String>| {
         "Got a JSON body"
     });
-    warp::path!()
+    
+    warp::path!("create_exercise")
         .and(warp::post())
         .and(json_body())
         .and_then(handlers::create_exercise)
