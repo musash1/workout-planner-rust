@@ -16,6 +16,9 @@ pub fn delete_routes() -> impl Filter<Extract = impl warp::Reply, Error = warp::
     delete_exercise()
 }
 
+pub fn update_routes() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+    update_exercise()
+}
 
 fn json_body() -> impl Filter<Extract = (models::Exercise,), Error = warp::Rejection> + Clone {
     warp::body::content_length_limit(1024 * 16).and(warp::body::json())
@@ -28,12 +31,6 @@ fn get_exercise() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejec
 }
 
 fn create_exercise() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
-    let post_route = warp::body::content_length_limit(1024 * 32)
-        .and(warp::body::json())
-        .map(|simple_map: HashMap<String, String>| {
-        "Got a JSON body"
-    });
-    
     warp::path!("create_exercise")
         .and(warp::post())
         .and(json_body())
@@ -42,6 +39,13 @@ fn create_exercise() -> impl Filter<Extract = impl warp::Reply, Error = warp::Re
 
 fn delete_exercise() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     warp::path!("delete_exercise" / u16)
-    .and(warp::delete())
-    .and_then(handlers::delete_exercise)
+        .and(warp::delete())
+        .and_then(handlers::delete_exercise)
+}
+
+fn update_exercise() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+    warp::path!("edit_exercise")
+        .and(warp::put())
+        .and(json_body())
+        .and_then(handlers::update_exercise)
 }
