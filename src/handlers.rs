@@ -2,8 +2,7 @@ use uuid::Uuid;
 use crate::models::Exercise;
 use std::convert::Infallible;
 use std::fs;
-use std::fs::OpenOptions;
-use std::io::Write;
+use std::{fs::OpenOptions, io::Write};
 use warp::http::StatusCode;
 
 pub async fn get_exercise(name: String) -> Result<impl warp::Reply, warp::Rejection> {
@@ -22,7 +21,7 @@ pub async fn get_exercises() -> Result<impl warp::Reply, warp::Rejection> {
     Ok(warp::reply::json(&exercise_json))
 }
 
-pub fn create_exercise(new_exercise: Exercise) -> Result<impl warp::Reply, Infallible> {
+pub async fn create_exercise(new_exercise: Exercise) -> Result<impl warp::Reply, Infallible> {
     let file = fs::read_to_string("exercises.json").unwrap();
     let mut new_file = OpenOptions::new().write(true).truncate(true).open("exercises.json").expect("couldnt open file");
     let mut exercises: Vec<Exercise> = serde_json::from_str(file.as_str()).expect("Couldnt create list");

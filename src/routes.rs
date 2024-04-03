@@ -8,6 +8,11 @@ pub fn routes() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejecti
     get_exercise()
 }
 
+pub fn post_routes() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+    create_exercise()
+}
+
+
 fn json_body() -> impl Filter<Extract = (models::Exercise,), Error = warp::Rejection> + Clone {
     warp::body::content_length_limit(1024 * 16).and(warp::body::json())
 }
