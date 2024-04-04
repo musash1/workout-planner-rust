@@ -36,8 +36,9 @@ pub async fn update_exercise(new_exercise: Exercise) -> Result<impl warp::Reply,
     let file = fs::read_to_string("exercises.json").unwrap();
     let mut new_file = OpenOptions::new().write(true).truncate(true).open("exercises.json").expect("couldnt open file");
     let mut exercises: Vec<Exercise> = serde_json::from_str(&file).unwrap();
-    exercises.push(new_exercise);
+    let index = exercises.iter().position(|e| e.id == new_exercise.id).unwrap();
+    exercises[index] = new_exercise;
     let json = serde_json::to_string(&exercises).expect("couldnt create json");
     new_file.write(json.as_bytes()).expect("couldnt write file");
-    Ok(warp::reply::with_status(format!("Exercise created"), StatusCode::CREATED))
+    Ok(warp::reply::with_status(format!("Exercise created"), StatusCode::OK))
 }
