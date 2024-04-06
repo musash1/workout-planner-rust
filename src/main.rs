@@ -1,22 +1,20 @@
-mod models;
-mod handlers;
-mod routes;
+mod exercises;
+mod workouts;
 
 use std::collections::HashMap;
 
-use routes::{delete_routes, post_routes, update_routes};
+use exercises::routes::{get_exercises,delete_exercises, post_exercises, update_exercises};
+use workouts::routes::get_workouts;
 use warp::{filters::method::delete, Filter};
 
 #[tokio::main]
 async fn main() {
-    let get_routes = routes::get_routes();
-
-    let routes = get_routes
-        .or(post_routes())
-        .or(delete_routes())
-        .or(update_routes())
+    let routes = get_exercises() 
+        .or(post_exercises())
+        .or(delete_exercises())
+        .or(update_exercises())
+        .or(get_workouts())
         .with(warp::cors().allow_any_origin());
-
 
     warp::serve(routes)
         .run(([127, 0, 0,1], 3030))

@@ -1,0 +1,10 @@
+[
+    {
+        "id": 1,
+        "name": "arnold chest workout",
+        "split_type": "chest",
+        "exercises": [
+            {"id":1,"name":"pushups","reps":3,"sets":12}
+        ]
+    }
+]

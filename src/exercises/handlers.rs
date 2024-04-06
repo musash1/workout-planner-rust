@@ -1,5 +1,4 @@
-use uuid::Uuid;
-use crate::models::Exercise;
+use crate::exercises::models::Exercise;
 use std::convert::Infallible;
 use std::fs;
 use std::{fs::OpenOptions, io::Write};
@@ -15,7 +14,13 @@ pub async fn create_exercise(new_exercise: Exercise) -> Result<impl warp::Reply,
     let file = fs::read_to_string("exercises.json").unwrap();
     let mut new_file = OpenOptions::new().write(true).truncate(true).open("exercises.json").expect("couldnt open file");
     let mut exercises: Vec<Exercise> = serde_json::from_str(&file).unwrap();
-    exercises.push(new_exercise);
+
+    if !exercises.iter().any(|e| e.id == new_exercise.id) {
+        exercises.push(new_exercise);
+    } else {
+        return Ok(warp::reply::with_status(format!("Exercise exists already"), StatusCode::BAD_REQUEST));
+    }
+
     let json = serde_json::to_string(&exercises).expect("couldnt create json");
     new_file.write(json.as_bytes()).expect("couldnt write file");
     Ok(warp::reply::with_status(format!("Exercise created"), StatusCode::CREATED))
@@ -37,8 +42,20 @@ pub async fn update_exercise(new_exercise: Exercise) -> Result<impl warp::Reply,
     let mut new_file = OpenOptions::new().write(true).truncate(true).open("exercises.json").expect("couldnt open file");
     let mut exercises: Vec<Exercise> = serde_json::from_str(&file).unwrap();
     let index = exercises.iter().position(|e| e.id == new_exercise.id).unwrap();
-    exercises[index] = new_exercise;
+
+    if !new_exercise.name.is_empty() {
+        exercises[index].name = new_exercise.name;
+    }
+
+    if new_exercise.sets != 0 {
+        exercises[index].sets = new_exercise.sets;
+    }
+
+    if new_exercise.reps != 0 {
+        exercises[index].reps = new_exercise.reps;
+    }
+
     let json = serde_json::to_string(&exercises).expect("couldnt create json");
     new_file.write(json.as_bytes()).expect("couldnt write file");
-    Ok(warp::reply::with_status(format!("Exercise created"), StatusCode::OK))
+    Ok(warp::reply::with_status(format!("Exercise updated"), StatusCode::OK))
 }
