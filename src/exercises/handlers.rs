@@ -18,6 +18,8 @@ pub async fn create_exercise(new_exercise: Exercise) -> Result<impl warp::Reply,
     if !exercises.iter().any(|e| e.id == new_exercise.id) {
         exercises.push(new_exercise);
     } else {
+        let json = serde_json::to_string(&exercises).expect("couldnt create json");
+        new_file.write(json.as_bytes()).expect("couldnt write file");
         return Ok(warp::reply::with_status(format!("Exercise exists already"), StatusCode::BAD_REQUEST));
     }
 
