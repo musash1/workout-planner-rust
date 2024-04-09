@@ -27,3 +27,14 @@ pub async fn create_workout(new_workout: Workout) -> Result<impl warp::Reply, wa
     new_file.write(json.as_bytes()).expect("couldnt write file");
     Ok(warp::reply::with_status(format!("Workout created"), StatusCode::CREATED))
 }
+
+pub async fn delete_workout(id: u16) -> Result<impl warp::Reply, warp::Rejection> {
+    let file = fs::read_to_string("workouts.json").unwrap();
+    let mut new_file = OpenOptions::new().write(true).truncate(true).open("workouts.json").expect("couldnt open file");
+    let mut workouts: Vec<Workout> = serde_json::from_str(&file).unwrap();
+    let index = workouts.iter().position(|w| w.id == id).unwrap();
+    workouts.remove(index);
+    let json = serde_json::to_string(&workouts).expect("couldnt create json");
+    new_file.write(json.as_bytes()).expect("couldnt write file");
+    Ok(warp::reply::with_status(format!("Workout deleted"), StatusCode::OK))
+}

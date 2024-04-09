@@ -14,7 +14,13 @@ pub fn get_workout() -> impl Filter<Extract = impl warp::Reply, Error = warp::Re
 
 pub fn post_workout() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
     warp::path!("workout")
-    .and(warp::post())
-    .and(json_body())
-    .and_then(handlers::create_workout)
+        .and(warp::post())
+        .and(json_body())
+        .and_then(handlers::create_workout)
+}
+
+pub fn delete_workout() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone { 
+    warp::path!("workout" / u16)
+        .and(warp::delete())
+        .and_then(handlers::delete_workout)
 }

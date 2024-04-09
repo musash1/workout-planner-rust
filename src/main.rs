@@ -4,7 +4,7 @@ mod workouts;
 use std::collections::HashMap;
 
 use exercises::routes::{get_exercise,delete_exercise, create_exercise, update_exercise};
-use workouts::routes::{get_workout, post_workout};
+use workouts::routes::{get_workout, post_workout, delete_workout};
 use warp::{filters::method::delete, Filter};
 
 #[tokio::main]
@@ -15,6 +15,7 @@ async fn main() {
         .or(update_exercise())
         .or(get_workout())
         .or(post_workout())
+        .or(delete_workout())
         .with(warp::cors().allow_any_origin());
 
     warp::serve(routes)
