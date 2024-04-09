@@ -1,4 +1,4 @@
-use warp::Filter;
+use warp::{reply::json, Filter};
 use crate::workouts::handlers;
 use super::models;
 
@@ -23,4 +23,11 @@ pub fn delete_workout() -> impl Filter<Extract = impl warp::Reply, Error = warp:
     warp::path!("workout" / u16)
         .and(warp::delete())
         .and_then(handlers::delete_workout)
+}
+
+pub fn update_workout() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone { 
+    warp::path!("workout")
+        .and(warp::put())
+        .and(json_body())
+        .and_then(handlers::update_workout)
 }
