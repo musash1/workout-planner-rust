@@ -1,7 +1,5 @@
 use crate::workouts::models::Workout;
-use std::convert::Infallible;
-use std::fs;
-use std::{fs::OpenOptions, io::Write};
+use std::{fs, fs::OpenOptions, io::Write, convert::Infallible};
 use warp::http::StatusCode;
 
 #[utoipa::path(

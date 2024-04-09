@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 use utoipa::{IntoParams, ToSchema};
-use uuid::Uuid;
 use crate::exercises::models::Exercise;
 
 

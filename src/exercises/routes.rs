@@ -1,6 +1,5 @@
 use warp::Filter;
-use crate::exercises::handlers;
-use crate::exercises::models::Exercise;
+use crate::exercises::{handlers, models::Exercise};
 
 fn json_body() -> impl Filter<Extract = (Exercise,), Error = warp::Rejection> + Clone {
     warp::body::content_length_limit(1024 * 16).and(warp::body::json())

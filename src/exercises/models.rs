@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 use utoipa::{IntoParams, ToSchema};
-use uuid::Uuid;
 
 
 #[derive(Debug, Deserialize, Serialize, Clone, ToSchema, IntoParams)]

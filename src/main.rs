@@ -2,17 +2,9 @@ mod exercises;
 mod workouts;
 
 use std::sync::Arc;
-
-use exercises::routes::{get_exercise, delete_exercise, create_exercise, update_exercise};
-use exercises::models::Exercise;
-use workouts::models::Workout;
-use warp::filters::path::{FullPath, Tail};
-use warp::reject::Rejection;
-use warp::reply::Reply;
-use warp::http::Uri;
-use warp::hyper::{Response, StatusCode};
-use workouts::routes::{get_workout, post_workout, delete_workout, update_workout};
-use warp::Filter;
+use exercises::{routes::{get_exercise, delete_exercise, create_exercise, update_exercise}, models::Exercise};
+use workouts::{routes::{get_workout, post_workout, delete_workout, update_workout}, models::Workout};
+use warp::{filters::path::{FullPath, Tail}, reject::Rejection, reply:: Reply, http::Uri, hyper::{Response, StatusCode}, Filter};
 use utoipa::OpenApi;
 use utoipa_swagger_ui::Config;
 

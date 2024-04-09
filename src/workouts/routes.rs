@@ -1,8 +1,7 @@
-use warp::{reply::json, Filter};
-use crate::workouts::handlers;
-use super::models;
+use warp::Filter;
+use crate::workouts::{handlers, models::Workout};
 
-fn json_body() -> impl Filter<Extract = (models::Workout,), Error = warp::Rejection> + Clone {
+fn json_body() -> impl Filter<Extract = (Workout,), Error = warp::Rejection> + Clone {
     warp::body::content_length_limit(1024 * 16).and(warp::body::json())
 }
 
