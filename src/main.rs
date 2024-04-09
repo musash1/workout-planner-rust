@@ -5,7 +5,7 @@ use std::sync::Arc;
 
 use exercises::routes::{get_exercise, delete_exercise, create_exercise, update_exercise};
 use exercises::models::Exercise;
-use utoipa_rapidoc::RapiDoc;
+use workouts::models::Workout;
 use warp::filters::path::{FullPath, Tail};
 use warp::reject::Rejection;
 use warp::reply::Reply;
@@ -23,9 +23,12 @@ async fn main() {
 
     #[derive(OpenApi)]
     #[openapi(
-        paths(exercises::handlers::get_exercises),
+        paths(exercises::handlers::get_exercises, exercises::handlers::create_exercise, 
+              exercises::handlers::delete_exercise, exercises::handlers::update_exercise,
+              workouts::handlers::get_workout, workouts::handlers::create_workout,
+              workouts::handlers::delete_workout, workouts::handlers::update_workout),
         components(
-            schemas(Exercise)
+            schemas(Exercise, Workout)
         ),
         tags(
             (name = "Workout", description = "Workouts management API")

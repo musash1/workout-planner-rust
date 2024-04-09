@@ -1,9 +1,10 @@
 use serde::{Deserialize, Serialize};
+use utoipa::{IntoParams, ToSchema};
 use uuid::Uuid;
 use crate::exercises::models::Exercise;
 
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, ToSchema, IntoParams)]
 pub struct Workout {
     pub id: u16,
     pub name: String,

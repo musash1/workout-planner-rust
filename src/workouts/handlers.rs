@@ -4,13 +4,28 @@ use std::fs;
 use std::{fs::OpenOptions, io::Write};
 use warp::http::StatusCode;
 
-pub async fn get_workout() -> Result<impl warp::Reply, warp::Rejection> {
+#[utoipa::path(
+        get,
+        path = "/workout",
+        responses(
+            (status = 200, description = "List workouts successfully", body = [Workout])
+        )
+    )]
+pub async fn get_workout() -> Result<impl warp::Reply, Infallible> {
     let workout = fs::read_to_string("workouts.json").expect("couldn't read file.");
     let workout_json: serde_json::Value = serde_json::from_str(workout.as_str()).expect("couldnt convert to json");
     Ok(warp::reply::json(&workout_json))
 }
 
-pub async fn create_workout(new_workout: Workout) -> Result<impl warp::Reply, warp::Rejection> {
+#[utoipa::path(
+        post,
+        path = "/workout",
+        request_body = Workout,
+        responses(
+            (status = 200, description = "created workout successfully", body = [Workout])
+        )
+    )]
+pub async fn create_workout(new_workout: Workout) -> Result<impl warp::Reply, Infallible> {
     let file = fs::read_to_string("workouts.json").unwrap();
     let mut new_file = OpenOptions::new().write(true).truncate(true).open("workouts.json").expect("couldnt open file");
     let mut workouts: Vec<Workout> = serde_json::from_str(&file).unwrap();
@@ -28,18 +43,40 @@ pub async fn create_workout(new_workout: Workout) -> Result<impl warp::Reply, wa
     Ok(warp::reply::with_status(format!("Workout created"), StatusCode::CREATED))
 }
 
-pub async fn delete_workout(id: u16) -> Result<impl warp::Reply, warp::Rejection> {
+#[utoipa::path(
+        delete,
+        path = "/workout/{id}",
+        responses(
+            (status = 200, description = "Delete successful"),
+            (status = 404, description = "Workout not found to delete"),
+        ),
+        params(
+            ("id" = u16, Path, description = "Workouts's unique id")
+        )
+    )]
+pub async fn delete_workout(id: u16) -> Result<impl warp::Reply, Infallible> {
     let file = fs::read_to_string("workouts.json").unwrap();
     let mut new_file = OpenOptions::new().write(true).truncate(true).open("workouts.json").expect("couldnt open file");
     let mut workouts: Vec<Workout> = serde_json::from_str(&file).unwrap();
-    let index = workouts.iter().position(|w| w.id == id).unwrap();
+    let index = workouts.iter().position(|w| w.id == id).unwrap_or(0);
+    if index == 0 {
+        return Ok(warp::reply::with_status(format!("Workout not found"), StatusCode::NOT_FOUND));
+    }
     workouts.remove(index);
     let json = serde_json::to_string(&workouts).expect("couldnt create json");
     new_file.write(json.as_bytes()).expect("couldnt write file");
     Ok(warp::reply::with_status(format!("Workout deleted"), StatusCode::OK))
 }
 
-pub async fn update_workout(new_workout: Workout) -> Result<impl warp::Reply, warp::Rejection> {
+#[utoipa::path(
+        put,
+        path = "/workout",
+        request_body = Workout,
+        responses(
+            (status = 200, description = "workout updated", body = [Workout])
+        )
+    )]
+pub async fn update_workout(new_workout: Workout) -> Result<impl warp::Reply, Infallible> {
     let file = fs::read_to_string("workouts.json").unwrap();
     let mut new_file = OpenOptions::new().write(true).truncate(true).open("workouts.json").expect("couldnt open file");
     let mut workouts: Vec<Workout> = serde_json::from_str(&file).unwrap();
