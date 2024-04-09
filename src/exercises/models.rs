@@ -1,8 +1,9 @@
 use serde::{Deserialize, Serialize};
+use utoipa::{IntoParams, ToSchema};
 use uuid::Uuid;
 
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, ToSchema, IntoParams)]
 pub struct Exercise {
     pub id: u16,
     pub name: String,

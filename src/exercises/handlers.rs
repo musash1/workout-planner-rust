@@ -4,7 +4,14 @@ use std::fs;
 use std::{fs::OpenOptions, io::Write};
 use warp::http::StatusCode;
 
-pub async fn get_exercises() -> Result<impl warp::Reply, warp::Rejection> {
+#[utoipa::path(
+        get,
+        path = "/exercise",
+        responses(
+            (status = 200, description = "List exercises successfully", body = [Exercise])
+        )
+    )]
+pub async fn get_exercises() -> Result<impl warp::Reply, Infallible> {
     let exercise = fs::read_to_string("exercises.json").expect("couldn't read file.");
     let exercise_json: serde_json::Value = serde_json::from_str(exercise.as_str()).expect("couldnt convert to json");
     Ok(warp::reply::json(&exercise_json))
