@@ -5,9 +5,7 @@ use warp::http::StatusCode;
 #[utoipa::path(
         get,
         path = "/exercise",
-        responses(
-            (status = 200, description = "List exercises successfully", body = [Exercise])
-        )
+        responses((status = 200, description = "List exercises successfully", body = [Exercise]))
     )]
 pub async fn get_exercises() -> Result<impl warp::Reply, Infallible> {
     let exercise = fs::read_to_string("exercises.json").expect("couldn't read file.");
@@ -19,9 +17,7 @@ pub async fn get_exercises() -> Result<impl warp::Reply, Infallible> {
         post,
         path = "/exercise",
         request_body = Exercise,
-        responses(
-            (status = 200, description = "workout created successfully", body = [Exercise])
-        )
+        responses((status = 200, description = "workout created successfully", body = [Exercise]))
     )]
 pub async fn create_exercise(new_exercise: Exercise) -> Result<impl warp::Reply, Infallible> {
     let file = fs::read_to_string("exercises.json").unwrap();
@@ -48,9 +44,7 @@ pub async fn create_exercise(new_exercise: Exercise) -> Result<impl warp::Reply,
             (status = 200, description = "Delete successful"),
             (status = 404, description = "Workout not found to delete"),
         ),
-        params(
-            ("id" = u16, Path, description = "Workout's unique id")
-        )
+        params(("id" = u16, Path, description = "Workout's unique id"))
     )]
 pub async fn delete_exercise(id: u16) -> Result<impl warp::Reply, Infallible> {
     let file = fs::read_to_string("exercises.json").unwrap();
@@ -71,9 +65,7 @@ pub async fn delete_exercise(id: u16) -> Result<impl warp::Reply, Infallible> {
         put,
         path = "/exercise",
         request_body = Exercise,
-        responses(
-            (status = 200, description = "exercise updated", body = [Exercise])
-        )
+        responses((status = 200, description = "exercise updated", body = [Exercise]))
     )]
 pub async fn update_exercise(new_exercise: Exercise) -> Result<impl warp::Reply, Infallible> {
     let file = fs::read_to_string("exercises.json").unwrap();

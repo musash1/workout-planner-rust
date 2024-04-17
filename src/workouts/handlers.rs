@@ -5,9 +5,7 @@ use warp::http::StatusCode;
 #[utoipa::path(
         get,
         path = "/workout",
-        responses(
-            (status = 200, description = "List workouts successfully", body = [Workout])
-        )
+        responses((status = 200, description = "List workouts successfully", body = [Workout]))
     )]
 pub async fn get_workout() -> Result<impl warp::Reply, Infallible> {
     let workout = fs::read_to_string("workouts.json").expect("couldn't read file.");
@@ -19,9 +17,7 @@ pub async fn get_workout() -> Result<impl warp::Reply, Infallible> {
         post,
         path = "/workout",
         request_body = Workout,
-        responses(
-            (status = 200, description = "created workout successfully", body = [Workout])
-        )
+        responses((status = 200, description = "created workout successfully", body = [Workout]))
     )]
 pub async fn create_workout(new_workout: Workout) -> Result<impl warp::Reply, Infallible> {
     let file = fs::read_to_string("workouts.json").unwrap();
@@ -48,9 +44,7 @@ pub async fn create_workout(new_workout: Workout) -> Result<impl warp::Reply, In
             (status = 200, description = "Delete successful"),
             (status = 404, description = "Workout not found to delete"),
         ),
-        params(
-            ("id" = u16, Path, description = "Workouts's unique id")
-        )
+        params(("id" = u16, Path, description = "Workouts's unique id"))
     )]
 pub async fn delete_workout(id: u16) -> Result<impl warp::Reply, Infallible> {
     let file = fs::read_to_string("workouts.json").unwrap();
@@ -70,9 +64,7 @@ pub async fn delete_workout(id: u16) -> Result<impl warp::Reply, Infallible> {
         put,
         path = "/workout",
         request_body = Workout,
-        responses(
-            (status = 200, description = "workout updated", body = [Workout])
-        )
+        responses((status = 200, description = "workout updated", body = [Workout]))
     )]
 pub async fn update_workout(new_workout: Workout) -> Result<impl warp::Reply, Infallible> {
     let file = fs::read_to_string("workouts.json").unwrap();
