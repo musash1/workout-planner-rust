@@ -10,3 +10,10 @@ pub fn get_workoutplan() -> impl Filter<Extract = impl warp::Reply, Error = warp
         .and(warp::get())
         .and_then(handlers::get_workoutplan)
 }
+
+pub fn post_workoutplan() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone {
+    warp::path!("workoutplan")
+        .and(warp::post())
+        .and(json_body())
+        .and_then(handlers::create_workoutplan)
+}
