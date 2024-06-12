@@ -5,7 +5,7 @@ mod workoutplans;
 use std::sync::Arc;
 use exercises::{routes::{get_exercise, delete_exercise, create_exercise, update_exercise}, models::Exercise};
 use workouts::{routes::{get_workout, post_workout, delete_workout, update_workout}, models::Workout};
-use workoutplans::{routes::{get_workoutplan, post_workoutplan}, models::WorkoutPlan};
+use workoutplans::{routes::{get_workoutplan, post_workoutplan, delete_workoutplan}, models::WorkoutPlan};
 use warp::{filters::path::{FullPath, Tail}, reject::Rejection, reply:: Reply, http::Uri, hyper::{Response, StatusCode}, Filter};
 use utoipa::OpenApi;
 use utoipa_swagger_ui::Config;
@@ -21,7 +21,8 @@ async fn main() {
               exercises::handlers::delete_exercise, exercises::handlers::update_exercise,
               workouts::handlers::get_workout, workouts::handlers::create_workout,
               workouts::handlers::delete_workout, workouts::handlers::update_workout,
-              workoutplans::handlers::get_workoutplan, workoutplans::handlers::create_workoutplan),
+              workoutplans::handlers::get_workoutplan, workoutplans::handlers::create_workoutplan, 
+              workoutplans::handlers::delete_workoutplan),
         components(
             schemas(Exercise, Workout, WorkoutPlan)
         ),
@@ -52,6 +53,7 @@ async fn main() {
         .or(update_workout())
         .or(get_workoutplan())
         .or(post_workoutplan())
+        .or(delete_workoutplan())
         .with(warp::cors().allow_any_origin());
 
     warp::serve(api_doc.or(swagger_ui).or(routes))

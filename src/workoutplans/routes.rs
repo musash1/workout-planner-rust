@@ -17,3 +17,9 @@ pub fn post_workoutplan() -> impl Filter<Extract = impl warp::Reply, Error = war
         .and(json_body())
         .and_then(handlers::create_workoutplan)
 }
+
+pub fn delete_workoutplan() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone { 
+    warp::path!("workoutplan" / u16)
+        .and(warp::delete())
+        .and_then(handlers::delete_workoutplan)
+}

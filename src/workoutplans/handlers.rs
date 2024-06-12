@@ -37,3 +37,26 @@ pub async fn create_workoutplan(new_workoutplan: WorkoutPlan) -> Result<impl war
     new_file.write(json.as_bytes()).expect("couldnt write file");
     Ok(warp::reply::with_status(format!("Workout created"), StatusCode::CREATED))
 }
+
+#[utoipa::path(
+        delete,
+        path = "/workoutplan/{id}",
+        responses(
+            (status = 200, description = "Delete successful"),
+            (status = 404, description = "Workoutplan not found to delete"),
+        ),
+        params(("id" = u16, Path, description = "Workouts's unique id"))
+    )]
+pub async fn delete_workoutplan(id: u16) -> Result<impl warp::Reply, Infallible> {
+    let file = fs::read_to_string("workoutplans.json").unwrap();
+    let mut new_file = OpenOptions::new().write(true).truncate(true).open("workoutplans.json").expect("couldnt open file");
+    let mut workoutplans: Vec<WorkoutPlan> = serde_json::from_str(&file).unwrap();
+    let index = workoutplans.iter().position(|w| w.id == id).unwrap_or(0);
+    if index == 0 {
+        return Ok(warp::reply::with_status(format!("Workoutplan not found"), StatusCode::NOT_FOUND));
+    }
+    workoutplans.remove(index);
+    let json = serde_json::to_string(&workoutplans).expect("couldnt create json");
+    new_file.write(json.as_bytes()).expect("couldnt write file");
+    Ok(warp::reply::with_status(format!("Workoutplan deleted"), StatusCode::OK))
+}
