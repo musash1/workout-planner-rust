@@ -23,3 +23,10 @@ pub fn delete_workoutplan() -> impl Filter<Extract = impl warp::Reply, Error = w
         .and(warp::delete())
         .and_then(handlers::delete_workoutplan)
 }
+
+pub fn update_workoutplan() -> impl Filter<Extract = impl warp::Reply, Error = warp::Rejection> + Clone { 
+    warp::path!("workoutplan")
+        .and(warp::put())
+        .and(json_body())
+        .and_then(handlers::update_workoutplan)
+}

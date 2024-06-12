@@ -60,3 +60,28 @@ pub async fn delete_workoutplan(id: u16) -> Result<impl warp::Reply, Infallible>
     new_file.write(json.as_bytes()).expect("couldnt write file");
     Ok(warp::reply::with_status(format!("Workoutplan deleted"), StatusCode::OK))
 }
+
+#[utoipa::path(
+        put,
+        path = "/workoutplan",
+        request_body = WorkoutPlan,
+        responses((status = 200, description = "workoutplan updated", body = [Workout]))
+    )]
+pub async fn update_workoutplan(new_workoutplan: WorkoutPlan) -> Result<impl warp::Reply, Infallible> {
+    let file = fs::read_to_string("workoutplans.json").unwrap();
+    let mut new_file = OpenOptions::new().write(true).truncate(true).open("workoutplans.json").expect("couldnt open file");
+    let mut workoutplans: Vec<WorkoutPlan> = serde_json::from_str(&file).unwrap();
+    let index = workoutplans.iter().position(|e| e.id == new_workoutplan.id).unwrap();
+
+    if !new_workoutplan.name.is_empty() {
+        workoutplans[index].name = new_workoutplan.name;
+    }
+
+    if new_workoutplan.workouts.len() != 0 {
+        workoutplans[index].workouts = new_workoutplan.workouts;
+    }
+
+    let json = serde_json::to_string(&workoutplans).expect("couldnt create json");
+    new_file.write(json.as_bytes()).expect("couldnt write file");
+    Ok(warp::reply::with_status(format!("Workout updated"), StatusCode::OK))
+}
